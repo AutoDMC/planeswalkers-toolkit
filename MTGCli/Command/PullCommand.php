@@ -2,11 +2,11 @@
 namespace MTGCli\Command;
 use CLIFramework\Command;
 
-class ListCommand extends Command {
+class PullCommand extends Command {
 
     public function brief()
     {
-        return 'List stacks or decks.  (Unimplemented)';
+        return 'Pull a specific card out of your library. (Unimplemented)';
     }
 
     function init()
@@ -20,14 +20,10 @@ class ListCommand extends Command {
 
     }
 
-    function execute($arg1,$arg2,$arg3 = 0)
+    function execute()
     {
         $logger = $this->logger;
 
-        $logger->info('execute');
-        $logger->error('error');
-
-        $input = $this->ask('Please type something');
-
+        $logger->info('Command not implemented yet!');
     }
 }

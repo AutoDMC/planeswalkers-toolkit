@@ -2,11 +2,11 @@
 namespace MTGCli\Command;
 use CLIFramework\Command;
 
-class ListCommand extends Command {
+class DispelDeckCommand extends Command {
 
     public function brief()
     {
-        return 'List stacks or decks.  (Unimplemented)';
+        return 'Deconstruct a deck, storing it in archive. (Unimplemented)';
     }
 
     function init()
@@ -17,17 +17,12 @@ class ListCommand extends Command {
     function options($opts)
     {
         // command options
-
     }
 
-    function execute($arg1,$arg2,$arg3 = 0)
+    function execute()
     {
         $logger = $this->logger;
 
-        $logger->info('execute');
-        $logger->error('error');
-
-        $input = $this->ask('Please type something');
-
+        $logger->info('Command not implemented yet!');
     }
 }
