@@ -1,0 +1,9 @@
+#!php
+<?php
+/**
+ * Magic The Gathering card database management.
+ */
+
+require 'vendor/autoload.php';
+$app = new \MTGCli\Console;
+$app->runWithTry($argv);

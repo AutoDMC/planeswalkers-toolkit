@@ -9,9 +9,15 @@
       "email": "email@example.com"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "MTGCli\\": "MTGCli"
+    }
+  },
   "require": {
     "corneltek/cliframework": "3.0.3",
     "jimbojsb/configulator": "v0.3",
-    "tracy/tracy": "v2.5.1"
+    "tracy/tracy": "v2.5.1",
+    "nette/caching": "v2.5.8"
   }
 }
