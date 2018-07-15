@@ -3,6 +3,7 @@
 /**
  * Magic The Gathering card database management.
  */
+error_reporting(E_ALL & ~E_NOTICE);
 
 require 'vendor/autoload.php';
 $app = new \MTGCli\Console;

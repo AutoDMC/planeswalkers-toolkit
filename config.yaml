@@ -1,0 +1,3 @@
+locations:
+  stacks: db\stacks
+  cache: blah
