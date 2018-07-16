@@ -5,3 +5,4 @@ composer.lock
 # Ignore stacks storage
 db/stacks/*
 !db/stacks/readme.txt
+db/cache.sqlite3

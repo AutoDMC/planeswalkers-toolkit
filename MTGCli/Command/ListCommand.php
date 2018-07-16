@@ -11,7 +11,8 @@ class ListCommand extends Command {
 
     function init()
     {
-        // register your subcommand here ..
+        $this->command( 'stacks', '\MTGCli\Command\Show\StacksCommand');
+        // $this->command( 'list-decks',  '\MTGCli\Command\ListDecksCommand');
     }
 
     function options($opts)
@@ -20,14 +21,8 @@ class ListCommand extends Command {
 
     }
 
-    function execute($arg1,$arg2,$arg3 = 0)
+    function execute()
     {
-        $logger = $this->logger;
-
-        $logger->info('execute');
-        $logger->error('error');
-
-        $input = $this->ask('Please type something');
-
+        echo "You must run 'list stacks' or 'list decks'.";
     }
 }
