@@ -11,7 +11,7 @@ namespace MTGCli\Util;
 
 use Symfony\Component\Yaml\Yaml;
 
-class Stack
+class Binder extends Stack
 {
     private $data = [];
     private $changed = false;
@@ -32,72 +32,48 @@ class Stack
 
     public function save() {
         if ($this->changed) {
-            $this->data['contents'] = array_values($this->data['contents']);
             file_put_contents($this->filename, Yaml::dump($this->data));
         }
     }
 
-    public function getName() {
-        return $this->data['name'];
-    }
-    public function setName($name) {
-        $this->data['name'] = $name;
-        $this->changed = true;
-    }
-
-    public function getLocation() {
-        return $this->data['location'];
-    }
-    public function setLocation($location) {
-        $this->data['location'] = $location;
-        $this->changed = true;
-    }
-
-    public function getDescription() {
-        return $this->data['description'];
-    }
-    public function setDescription($description) {
-        $this->data['description'] = $description;
-        $this->changed = true;
-    }
-
     /**
-     * Search through this stack to see if it contains a specific multiverse id (gatherer card)
+     * Loop through the slots of the data block to find an empty slot.  If you don't find an existing empty slot, add
+     * one to the end.
      *
-     * @param $multiverseId Gatherer ID number
-     * @param bool $isHolo Looking for a Holofoil?
-     * @return bool True if this stack contains the card.
+     * @return int|string
      */
-    public function containsCard($multiverseId, $isHolo = false) {
-        $attribute = 'r'; // Regular card
-        if ($isHolo) {
-            $attribute = 'h'; // Holo card
-        }
-        foreach ($this->data['contents'] as $slot => $cardData) {
-            if ($cardData['mvid'] == $multiverseId && $cardData['attr'] == $attribute) {
-                return $slot + 1; // Because humans don't like to index 0;
+    private function findNextEmptySlot() {
+        $slot = 0;
+        foreach ($this->data['contents'] as $row => $value) {
+            if(empty($value)) {
+                return $row;
             }
+            $slot = $row;
         }
-        return false;
+        return $slot + 1;
     }
 
     /**
-     * Append a card to this stack.
+     * Cards are inserted into specific slots in binders.
      *
-     * @param $multiverseId Gatherer ID Number
-     * @param $isHolo Is this card a holofoil?
-     *
-     * @return int Slot number of inserted card.
+     * @param $multiverseId Nultiverse ID of card to insert
+     * @param $isHolo True if this card is holo
+     * @param null $slotNumber Slot number to insert into; if null, we'll find an open slot.
      */
-    public function appendCard($multiverseId, $isHolo) {
+    public function insertCard($multiverseId, $isHolo, $slotNumber = null) {
         $holoness = 'r';
         if ($isHolo) {
             $holoness = 'h';
         }
-        array_push($this->data['contents'], ['mvid' => $multiverseId, 'attr' => $holoness]);
-        $this->changed = true;
-        $this->save();
-        return count($this->data['contents']);
+        if (is_null($slotNumber)) {
+            $slotNumber = $this->findNextEmptySlot();
+        }
+        if (!empty($this->data['contents'][$slotNumber])) {
+            throw new Exception("Attempted to add a card to a slot which is already full in binder {$this->stackName}");
+        }
+        $this->data['contents'][$slotNumber] = ['mvid' => $multiverseId, 'attr' => $holoness];
+
+        echo "Card inserted into slot {$slotNumber}.";
     }
 
     /**
@@ -126,5 +102,4 @@ class Stack
             return false;
         }
     }
-
 }

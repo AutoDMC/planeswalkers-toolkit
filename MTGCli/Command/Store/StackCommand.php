@@ -1,13 +1,13 @@
 <?php // Just a sample command
-namespace MTGCli\Command;
+namespace MTGCli\Command\Store;
 use CLIFramework\Command;
 use MTGCli\Util\Stack;
 
-class StoreCommand extends Command {
+class StackCommand extends Command {
 
     public function brief()
     {
-        return 'Store a card in your library.';
+        return 'Store a card in your library. (Unimplemented)';
     }
 
     public function usage()
@@ -31,7 +31,7 @@ MTG;
 
     function init()
     {
-        $this->command( 'stack', '\MTGCli\Command\Store\StackCommand');
+        // register your subcommand here ..
     }
 
     function options($opts)
@@ -40,8 +40,12 @@ MTG;
 
     }
 
-    function execute($multiverseId, $location, $slot)
+    function execute($stackName, $multiverseId, $isHolo = false)
     {
-        echo "Must run `store stack` or `store binder`.";
+        $stack = new Stack($stackName);
+
+        $slot = $stack->appendCard($multiverseId, $isHolo);
+
+        echo $slot;
     }
 }
