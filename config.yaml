@@ -1,3 +1,4 @@
 locations:
   stacks: db\stacks
+  binders: db\binders
   cache: db\cache.sqlite3

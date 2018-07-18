@@ -13,14 +13,9 @@ use Symfony\Component\Yaml\Yaml;
 
 class Binder extends Stack
 {
-    private $data = [];
-    private $changed = false;
-    private $stackName = null;
-    private $filename = null;
-
-    public function __construct($stackName) {
-        $this->stackName = $stackName;
-        $this->filename = Configulator()['locations']['stacks'] . DIRECTORY_SEPARATOR . $stackName;
+    public function __construct($binderName) {
+        $this->collectionName = $binderName;
+        $this->filename = Configulator()['locations']['binders'] . DIRECTORY_SEPARATOR . $binderName . '.yaml';
         if (!file_exists($this->filename)) {
             throw new \Exception("Cannot read {$this->filename}.  Does this stack exist?");
         }
@@ -65,7 +60,7 @@ class Binder extends Stack
         if ($isHolo) {
             $holoness = 'h';
         }
-        if (is_null($slotNumber)) {
+        if ($slotNumber === '*') {
             $slotNumber = $this->findNextEmptySlot();
         }
         if (!empty($this->data['contents'][$slotNumber])) {
@@ -74,32 +69,5 @@ class Binder extends Stack
         $this->data['contents'][$slotNumber] = ['mvid' => $multiverseId, 'attr' => $holoness];
 
         echo "Card inserted into slot {$slotNumber}.";
-    }
-
-    /**
-     * Internal function to simply delete a specific slot.  Used when a card is removed from a stack.
-     * @param $slot
-     */
-    private function removeCardBySlot($slot) {
-        unset($this->data['contents'][$slot]);
-        $this->changed = true;
-        $this->save();
-    }
-
-    /**
-     * Remove a given card and holo/notholo pair from a stack;  returns the specific slot number removed.
-     *
-     * @param $multiverseId Gatherer ID number
-     * @param $isHolo True if the card being removed is a holo.
-     * @return bool
-     */
-    public function removeCard($multiverseId, $isHolo) {
-        $slot = $this->containsCard($multiverseId, $isHolo);
-        if ($slot !== false) {
-            $this->removeCardBySlot($slot);
-            return $slot;
-        } else {
-            return false;
-        }
     }
 }

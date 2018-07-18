@@ -11,7 +11,8 @@ class ListCommand extends Command {
 
     function init()
     {
-        $this->command( 'stacks', '\MTGCli\Command\Show\StacksCommand');
+        $this->command( 'stacks' , '\MTGCli\Command\DoList\StacksCommand');
+        $this->command( 'binders', '\MTGCli\Command\DoList\BindersCommand');
         // $this->command( 'list-decks',  '\MTGCli\Command\ListDecksCommand');
     }
 

@@ -52,6 +52,7 @@ MTG;
 
     // Ready-To-Use Commands
     $this->command( 'import-stack',      '\MTGCli\Command\ImportStackCommand');
+    $this->command( 'create',            '\MTGCli\Command\CreateCommand');
     $this->command( 'generate-stack-id', '\MTGCli\Command\GenerateStackIdCommand');
 
     // Placeholder Commands

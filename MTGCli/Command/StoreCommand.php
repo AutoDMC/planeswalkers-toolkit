@@ -31,7 +31,8 @@ MTG;
 
     function init()
     {
-        $this->command( 'stack', '\MTGCli\Command\Store\StackCommand');
+        $this->command( 'stack',  '\MTGCli\Command\Store\StackCommand');
+        $this->command( 'binder', '\MTGCli\Command\Store\BinderCommand');
     }
 
     function options($opts)
@@ -40,7 +41,7 @@ MTG;
 
     }
 
-    function execute($multiverseId, $location, $slot)
+    function execute()
     {
         echo "Must run `store stack` or `store binder`.";
     }
