@@ -22,8 +22,8 @@ class BinderCommand extends Command {
         binder.
         
         You must provide a slot number to insert the card into;  if you don't 
-        care, and simply want to fill the first available slot, provide '*'
-        as the slot number. 
+        care, and simply want to fill the first available slot, provide 0
+        as the slot number.  (Slots should start with #1, so #0 is obvious.)
 MTG;
     }
 
@@ -43,7 +43,5 @@ MTG;
         $stack = new Binder($stackName);
 
         $slot = $stack->insertCard($multiverseId, $isHolo, $slot);
-
-        echo $slot;
     }
 }

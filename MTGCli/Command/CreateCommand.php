@@ -33,7 +33,7 @@ MTG;
 
     }
 
-    function execute($type, $name = null)
+    function execute($type, $name = null, $description = null)
     {
         if (!in_array($type, $this->fileTypes)) {
             throw new \Exception("Cannot create a collection of type {$type}");
@@ -43,6 +43,7 @@ MTG;
         // Only binders have a custom name...
         if ($type == 'binder') {
             $this->fileStructure['name'] = $name;
+            $this->fileStructure['description'] = $description;
             $configKey = 'binders';
         } else {
             $this->fileStructure['name'] = GenerateStackIdCommand::generateName();
@@ -70,7 +71,9 @@ MTG;
         'name' => null,
         'type' => null,
         'description' => null,
-        'contents' => [],
+        'contents' => [
+            0 => null,
+        ],
         'version' => 1,
     ];
 }

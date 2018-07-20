@@ -11,7 +11,7 @@ namespace MTGCli\Util;
 
 use Symfony\Component\Yaml\Yaml;
 
-class Binder extends Stack
+class Binder extends Collection
 {
     public function __construct($binderName) {
         $this->collectionName = $binderName;
@@ -23,12 +23,19 @@ class Binder extends Stack
         if ($this->data['version'] != 1) {
             throw new \Exception("Cannot read version {$this->data['version']} at {$this->filename}.");
         }
+        if (!empty($this->data['contents'])) {
+            // Let's make sure this file wasn't messed up outside of Planeswalker's Toolkit.
+            ksort($this->data['contents']);
+        }
     }
 
+    /**
+     * In Stacks, we want to re-stack the contents so that numbers are consecutive.
+     */
     public function save() {
-        if ($this->changed) {
-            file_put_contents($this->filename, Yaml::dump($this->data));
-        }
+        ksort($this->data['contents']);
+        // $this->data['contents'] = array_reverse($this->data['contents'], true);
+        parent::save();
     }
 
     /**
@@ -38,36 +45,57 @@ class Binder extends Stack
      * @return int|string
      */
     private function findNextEmptySlot() {
-        $slot = 0;
-        foreach ($this->data['contents'] as $row => $value) {
-            if(empty($value)) {
-                return $row;
-            }
-            $slot = $row;
+        if (empty($this->data['contents'])) {
+            return 1;
         }
-        return $slot + 1;
+        $lastSeen = 0;
+        foreach ($this->data['contents'] as $row => $value) {
+            $row = str_replace('#', '', $row);
+            dump("looking at {$row}, the last row I saw was {$lastSeen}.");
+            // We're looking for gaps.  If this row number is more than +1 of the last number we saw, then there is
+            // a gap!  Let's give the gap number:
+            if ($row > $lastSeen + 1) {
+                return $lastSeen + 1;
+            }
+            $lastSeen = $row;
+        }
+        // Whelp, we went through the whole list... no gaps!  Let's send the next slot:
+        return $lastSeen + 1;
     }
 
     /**
      * Cards are inserted into specific slots in binders.
      *
+     * We have to kludge around the auto-sorting feature of YAML by forcing string keys, in the format of #IIII
+     *
      * @param $multiverseId Nultiverse ID of card to insert
      * @param $isHolo True if this card is holo
-     * @param null $slotNumber Slot number to insert into; if null, we'll find an open slot.
+     * @param $slotNumber Slot number to insert into; if null, we'll find an open slot.
+     *
+     * @throws \Exception
+     *
+     * @return $slotNumber The slot number inserted.
      */
-    public function insertCard($multiverseId, $isHolo, $slotNumber = null) {
+    public function insertCard($multiverseId, $isHolo, $slotNumber = 0) {
         $holoness = 'r';
         if ($isHolo) {
             $holoness = 'h';
         }
-        if ($slotNumber === '*') {
+        if ($slotNumber == 0) {
             $slotNumber = $this->findNextEmptySlot();
+        } // dump("I have found slot number " . $slotNumber);
+        if (!empty($this->data['contents']["$slotNumber"])) {
+            throw new \Exception("Attempted to add a card to a slot which is already full in binder {$this->stackName}");
         }
-        if (!empty($this->data['contents'][$slotNumber])) {
-            throw new Exception("Attempted to add a card to a slot which is already full in binder {$this->stackName}");
-        }
+        $slotNumber = "#" . str_pad($slotNumber, 4, " ", STR_PAD_LEFT);
         $this->data['contents'][$slotNumber] = ['mvid' => $multiverseId, 'attr' => $holoness];
+        // dump($this->data);
+        $this->changed = true;
+        $this->save();
+        // After save!
+        // dump($this->data);
 
-        echo "Card inserted into slot {$slotNumber}.";
+        echo "Card inserted into slot {$slotNumber}.\n";
+        return $slotNumber;
     }
 }

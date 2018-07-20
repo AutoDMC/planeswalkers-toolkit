@@ -54,6 +54,7 @@ MTG;
     $this->command( 'import-stack',      '\MTGCli\Command\ImportStackCommand');
     $this->command( 'create',            '\MTGCli\Command\CreateCommand');
     $this->command( 'generate-stack-id', '\MTGCli\Command\GenerateStackIdCommand');
+        $this->command( 'identify', '\MTGCli\Command\IdentifyCommand');
 
     // Placeholder Commands
     $this->command( 'search','\MTGCli\Command\SearchCommand' );

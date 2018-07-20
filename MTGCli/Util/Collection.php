@@ -54,7 +54,7 @@ abstract class Collection
         }
         foreach ($this->data['contents'] as $slot => $cardData) {
             if ($cardData['mvid'] == $multiverseId && $cardData['attr'] == $attribute) {
-                return $slot + 1; // Because humans don't like to index 0;
+                return $slot; // Because humans don't like to index 0;
             }
         }
         return false;

@@ -18,6 +18,18 @@ class Scryfall
         return self::scry("cards/multiverse/{$multiverseId}");
     }
 
+    function identifyByName(string $name, string $set = null) {
+        $additionalOptions = '';
+
+        if (!is_null($set)) {
+            $additionalOptions .= " e:{$set}";
+        }
+
+        dump("/cards/search?unique=prints&order=released&q={$name}" . $additionalOptions);
+
+        return self::scry("/cards/search?unique=prints&order=released&q={$name}" . $additionalOptions);
+    }
+
     private function scry($methodPath, $parameters = []) {
         $scryURL = self::SCRYFALL_URL . $methodPath;
 
