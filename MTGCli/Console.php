@@ -51,7 +51,7 @@ MTG;
     Configulator()->loadFile('config.yaml');
 
     // Ready-To-Use Commands
-    $this->command( 'import-stack',      '\MTGCli\Command\ImportStackCommand');
+    $this->command( 'import',      '\MTGCli\Command\ImportCommand');
     $this->command( 'create',            '\MTGCli\Command\CreateCommand');
     $this->command( 'generate-stack-id', '\MTGCli\Command\GenerateStackIdCommand');
         $this->command( 'identify', '\MTGCli\Command\IdentifyCommand');

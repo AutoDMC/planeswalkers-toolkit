@@ -8,3 +8,4 @@ db/binders/*
 db/decks/*
 !db/stacks/readme.txt
 db/cache.sqlite3
+db/import
