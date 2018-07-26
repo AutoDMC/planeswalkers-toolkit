@@ -6,6 +6,6 @@ composer.lock
 db/stacks/*
 db/binders/*
 db/decks/*
-!db/stacks/readme.txt
+!db/*/README.md
 db/cache.sqlite3
 db/import
