@@ -21,6 +21,7 @@
     "nette/caching": "v2.5.8",
     "nette/neon": "v2.4.3",
     "guzzlehttp/guzzle": "6.3.3",
-    "rybakit/msgpack": "v0.5.3"
+    "rybakit/msgpack": "v0.5.3",
+    "league/csv": "^9.0"
   }
 }
