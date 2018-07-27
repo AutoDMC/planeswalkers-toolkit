@@ -1,6 +1,7 @@
 <?php // Just a sample command
 namespace MTGCli\Command\Import;
 use CLIFramework\Command;
+use League\Csv\Reader;
 use MTGCli\CachedScryfall;
 
 class IonCsvCommand extends Command {
@@ -22,12 +23,25 @@ class IonCsvCommand extends Command {
 MTG;
     }
 
-    function execute($importType, $path)
+    function execute($importType, $path, $stackName = null)
     {
         $scry = new CachedScryfall();
 
-        $parsed = file_get_contents($path);
-        dump($parsed);
+        $scry->getCurrentSets();
+
+        die();
+
+        $csv = Reader::createFromPath($path);
+
+        foreach ($csv->getRecords() as $offset => $record) {
+            // Get set of card, based on long form set string
+
+            // Get Multiverse ID for card based on set and name
+
+            // Insert that card into the stack
+            dump($offset);
+            dump($record);
+        }
 
         // Store Binder
 

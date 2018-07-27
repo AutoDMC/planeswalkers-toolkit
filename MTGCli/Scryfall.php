@@ -30,6 +30,16 @@ class Scryfall
         return self::scry("/cards/search?unique=prints&order=released&q={$name}" . $additionalOptions);
     }
 
+    function getCurrrentSets()
+    {
+        return self::scry('/sets');
+    }
+
+    function getSetMappings()
+    {
+
+    }
+
     private function scry($methodPath, $parameters = []) {
         $scryURL = self::SCRYFALL_URL . $methodPath;
 
