@@ -3,6 +3,10 @@ namespace MTGCli\Command\Import;
 use CLIFramework\Command;
 use League\Csv\Reader;
 use MTGCli\CachedScryfall;
+use MTGCli\Command\Identify\Card;
+use MTGCli\Command\Identify\Set;
+use MTGCli\Util\Stack;
+
 
 class IonCsvCommand extends Command {
 
@@ -23,38 +27,52 @@ class IonCsvCommand extends Command {
 MTG;
     }
 
-    function execute($importType, $path, $stackName = null)
+    function execute($path)
     {
         $scry = new CachedScryfall();
 
         $scry->getCurrentSets();
-
-        die();
+        $scry->getSetMappings();
 
         $csv = Reader::createFromPath($path);
+        $csv->setHeaderOffset(0);
+
+        $stack = new Stack();
+        $unidentifiedCards = [];
+        $identifiedCardCount = 0;
 
         foreach ($csv->getRecords() as $offset => $record) {
             // Get set of card, based on long form set string
+            $setSeek = new Set();
+            $bestGuessSet = array_shift($setSeek->getSetNameSimilarity($record['Edition']))['code'];
 
             // Get Multiverse ID for card based on set and name
+            $cardSeek = new Card();
+            $cardProbablyIs = $cardSeek->identifyByName($record['Cardname'], $bestGuessSet)[0];
+            if (is_null($cardProbablyIs)) {
+                $unidentifiedCards[] = [ 'name' => $record['Cardname'], 'set' => $record['Edition'], 'setGuess' => $bestGuessSet ];
+                continue;
+            }
+
+            // Holo?
+            $holo = false;
+            if ($record['Foil'] === 'True') {
+                $holo = true;
+            }
 
             // Insert that card into the stack
-            dump($offset);
-            dump($record);
+            $stack->appendCard($cardProbablyIs['multiverse_ids'][0], $holo, "{$record['Cardname']} - {$record['Edition']} ({$bestGuessSet})");
+
+            $identifiedCardCount++;
         }
 
-        // Store Binder
-
-        // Store Stack
-
-        // Store Deck (Stack + Decklist)
-
-        /*
-        $cardList = $scry->identifyByName($cardName, $set);
-
-        foreach($cardList['data'] as $card) {
-            echo "{$card['multiverse_ids'][0]}\t{$card['set']} #{$card['collector_number']}  \t'{$card['name']}'\n";
+        echo $stack->getName() . " has been created.  {$identifiedCardCount} cards identified.\n";
+        if (!empty($unidentifiedCards)) {
+            echo "There were problems identifying cards: \n";
+            foreach ($unidentifiedCards as $card) {
+                echo "- {$card['name']} from {$card['set']} (Guessed: {$card['setGuess']})\n";
+            }
+            echo "Manually add these cards to the stack, or fix the CSV, delete the stack, and try again.";
         }
-        */
     }
 }

@@ -26,34 +26,58 @@ class CachedScryfall extends Scryfall
 
     function getByMultiverse(int $multiverseId) {
         $key = "getByMultiverse:{$multiverseId}";
-        $data = $this->cache->load($key);
+        $data = $this->cacheGet($key);
         if ($data === null) {
-            $scryResult = parent::getByMultiverse($multiverseId);
-            $data = MessagePack::pack($scryResult);
-            $this->cache->save($key, $data, [Cache::EXPIRE => '24 hours']);
+            $data = parent::getByMultiverse($multiverseId);
+            $this->cachePut($key, $data, [Cache::EXPIRE => '7 days']);
         }
-        return MessagePack::unpack($data);
+        return $data;
     }
 
     function getCurrentSets() {
-        $data = $this->cache->load('rawSets');
+        $data = $this->cacheGet('rawSets');
         if ($data === null) {
-            $scryResult = parent::getCurrrentSets();
-            $data = MessagePack::pack($scryResult);
-            $this->cache->save('rawSets', $data, [Cache::EXPIRE => '7 days']);
+            $data = parent::getCurrentSets();
+            $this->cachePut('rawSets', $data, [Cache::EXPIRE => '7 days']);
         }
-        return MessagePack::unpack($data);
+        return $data;
     }
 
     function getSetMappings() {
-        $data = $this->cache->load('setMappings');
+        $data = $this->cacheGet('setMappings');
         if ($data === null) {
-            $scryResult = parent::getSetMappings();
-            $data = MessagePack::pack($scryResult);
-            $this->cache->save('setMappings', $data, [Cache::ITEMS => ['rawSets']]);
+            $data = parent::getSetMappings();
+            $this->cachePut('setMappings', $data, [Cache::ITEMS => ['rawSets']]);
         }
-        return MessagePack::unpack($data);
+        return $data;
     }
 
-    // TODO:  Make a cache function?
+    // Cache functions... TODO:  Break these out to a proper class?
+
+    function cacheGet($key) {
+        $data = $this->cache->load($key);
+        $unpackedData = $this->unpack($data);
+        return $unpackedData;
+    }
+
+    function cachePut($key, $rawData, $cacheConfiguration) {
+        $data = $this->pack($rawData);
+        try {
+            $this->cache->save($key, $data, $cacheConfiguration);
+        } catch (\Exception $e) {
+            die("Oh no! {$e->getMessage()}");
+        } catch (\Throwable $e) {
+            die("Oh no! {$e->getMessage()}");
+        }
+    }
+
+    function pack($data) {
+        // return MessagePack::pack($data);
+        return json_encode($data);
+    }
+
+    function unpack($data) {
+        // return MessagePack::unpack($data);
+        return json_decode($data, true);
+    }
 }

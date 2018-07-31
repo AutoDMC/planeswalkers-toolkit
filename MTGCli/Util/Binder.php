@@ -95,7 +95,7 @@ class Binder extends Collection
         // After save!
         // dump($this->data);
 
-        echo "Card inserted into slot {$slotNumber}.\n";
+        echo "Card.php inserted into slot {$slotNumber}.\n";
         return $slotNumber;
     }
 }

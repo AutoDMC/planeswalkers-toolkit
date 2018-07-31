@@ -9,3 +9,6 @@ db/decks/*
 !db/*/README.md
 db/cache.sqlite3
 db/import
+
+# I sync my db folder between computers, so I ignore this file... it's a personal hack.  Sorry.
+db/.sync

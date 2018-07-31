@@ -25,19 +25,26 @@ class Scryfall
             $additionalOptions .= " e:{$set}";
         }
 
-        dump("/cards/search?unique=prints&order=released&q={$name}" . $additionalOptions);
-
         return self::scry("/cards/search?unique=prints&order=released&q={$name}" . $additionalOptions);
     }
 
-    function getCurrrentSets()
+    function getCurrentSets()
     {
         return self::scry('/sets');
     }
 
     function getSetMappings()
     {
-
+        $setMappings = ['nameToCode' => [], 'codeToName' => []];
+        foreach (self::getCurrentSets()['data'] as $set) {
+            $name = mb_strtolower($set['name']);
+            $code = mb_strtolower($set['code']);
+            $setMappings['nameToCode'][$name] = $code;
+            $setMappings['codeToName'][$code] = $name;
+        }
+        dump("set mappings");
+        dump($setMappings);
+        return $setMappings;
     }
 
     private function scry($methodPath, $parameters = []) {
